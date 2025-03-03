@@ -1,42 +1,28 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = ({ onSearch }) => {
   const [search, setSearch] = useState("");
 
-  return (
-    //   <div className="p-4 flex justify-between  fixed top-0 left-0 w-full z-[9999]  bg-black">
-    //     <div className="flex items-center space-x-5">
-    //       <input
-    //         type="text"
-    //         placeholder="Search"
-    //         className="border border-gray-300 p-2 text-black"
-    //         value={search}
-    //         onChange={(e) => setSearch(e.target.value)}
-    //       />
-    //       <button
-    //         className="bg-red-700 text-white px-3 py-1 rounded-lg"
-    //         onClick={() => onSearch(search)}
-    //       >
-    //         Search
-    //       </button>
-    //     </div>
+  const navigate = useNavigate();
 
-    //   </div>
-    // );
+  const handleSearch = () => {
+    if (search.trim() !== "") {
+      navigate(`/search?q=${search.trim()}`);
+    }
+  };
+
+  return (
     <div className="p-4 flex justify-between fixed top-0 left-0 w-full z-[9999] bg-black">
       <div className="flex items-center gap-8">
         <h1 className="text-[30px] uppercase text-red-700 font-bold">Movie</h1>
         <nav className="hidden md:flex items-center space-x-5">
-          <a href="#" className="hover:text-red-700">
+          <a href="/" className="hover:text-red-700 text-white">
             Home
           </a>
-          <a href="#" className="hover:text-red-700">
+          <a href="#" className="hover:text-red-700 text-white">
             About
-          </a>
-          <a href="#" className="hover:text-red-700">
-            Contact
           </a>
         </nav>
       </div>
@@ -51,7 +37,8 @@ const Header = ({ onSearch }) => {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button type="submit" className="p-2" onClick={() => onSearch(search)}>
+        {/* <button type="submit" className="p-2" onClick={() => onSearch(search)}> */}
+        <button type="submit" className="p-2" onClick={handleSearch}>
           <svg className="fill-black h-6 w-6" viewBox="0 0 56.966 56.966">
             <path
               d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23

@@ -11,26 +11,26 @@ function HomePage() {
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
 
-  const [searchData, setSearchData] = useState([]);
+  // const [searchData, setSearchData] = useState([]);
 
-  const handleSearch = async (value) => {
-    const url = `https://api.themoviedb.org/3/search/movie?query=${value}&include_adult=false&language=vi&page=1`;
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-      },
-    };
-    if (value === "") return setSearchData([]);
-    try {
-      const response = await fetch(url, options);
-      const data = await response.json();
-      setSearchData(data.results);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleSearch = async (value) => {
+  //   const url = `https://api.themoviedb.org/3/search/movie?query=${value}&include_adult=false&language=vi&page=1`;
+  //   const options = {
+  //     method: "GET",
+  //     headers: {
+  //       accept: "application/json",
+  //       Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+  //     },
+  //   };
+  //   if (value === "") return setSearchData([]);
+  //   try {
+  //     const response = await fetch(url, options);
+  //     const data = await response.json();
+  //     setSearchData(data.results);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
     (async function () {
@@ -60,21 +60,20 @@ function HomePage() {
       }
     })();
   }, []);
-  console.log(trendingMovies);
   return (
     <>
       {/* <MovieProvider> */}
       <div className="h-full bg-black text-white min-h-screen pb-10 relative">
-        <Header onSearch={handleSearch} />
+        {/* <Header onSearch={handleSearch} /> */}
         <Banner />
-        {searchData.length === 0 && (
-          <MovieList title="Phim Hot" data={trendingMovies.slice(0, 10)} />
-        )}
-        {searchData.length === 0 && (
-          <MovieList title="Phim đề cử" data={topRatedMovies.slice(0, 10)} />
-        )}
+        {/* {searchData.length === 0 && ( */}
+        <MovieList title="Phim Hot" data={trendingMovies.slice(0, 10)} />
+        {/* )} */}
+        {/* {searchData.length === 0 && ( */}
+        <MovieList title="Phim đề cử" data={topRatedMovies.slice(0, 10)} />
+        {/* )} */}
 
-        {searchData.length > 0 && <MovieSearch data={searchData} />}
+        {/* {searchData.length > 0 && <MovieSearch data={searchData} />} */}
       </div>
       {/* </MovieProvider> */}
     </>

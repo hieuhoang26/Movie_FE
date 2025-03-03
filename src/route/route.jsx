@@ -4,6 +4,7 @@ import Layout from "./Layout";
 import HomePage from "../page/HomePage";
 import SignUp from "../page/SignUp";
 import MovieDetail from "../page/MovieDetail";
+import SearchPage from "../page/SearchPage";
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
       {
         path: "/movie/:id",
         element: <MovieDetail />,
+      },
+      {
+        path: "/search",
+        element: <SearchPage />,
       },
     ],
   },

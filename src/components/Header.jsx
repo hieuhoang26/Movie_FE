@@ -1,9 +1,15 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+
+import teamImage from "../assets/img/team-1-800x800.jpg";
 
 const Header = ({ onSearch }) => {
+  const { isAuthenticated, logout } = useContext(AuthContext);
   const [search, setSearch] = useState("");
+
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const navigate = useNavigate();
 
@@ -49,10 +55,55 @@ const Header = ({ onSearch }) => {
           </svg>
         </button>
       </div>
+      {isAuthenticated ? (
+        <div className="relative">
+          <button
+            className="flex items-center text-white px-3 py-1 rounded-lg"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            <img
+              src={teamImage}
+              alt="avatar"
+              className="h-8 w-8 rounded-full object-cover mr-2"
+            />
+          </button>
 
-      <Link to="/login" className=" text-white px-3 py-1 rounded-lg">
-        Login
-      </Link>
+          {showDropdown && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg overflow-hidden z-50">
+              {/* {profile?.shopId && (
+                <Link
+                  to={`/dashboard/${profile?.shopId}`}
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Dashboard
+                </Link>
+              )} */}
+              <Link
+                to="/profile"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Profile
+              </Link>
+              <Link
+                to="/"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                History
+              </Link>
+              <button
+                onClick={logout}
+                className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <Link to="/login" className="text-white px-3 py-1 rounded-lg">
+          Login
+        </Link>
+      )}
     </div>
   );
 };

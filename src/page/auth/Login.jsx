@@ -1,9 +1,60 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
+import { AuthContext } from "../../context/AuthContext";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import authApi from "../../api/auth";
+import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 
-const SignUp = () => {
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    // .email("Invalid email format")
+    .required("Email is required"),
+  password: yup
+    .string()
+    // .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+});
+
+const Login = () => {
+  const { login, setIsAuthenticated } = useContext(AuthContext);
+
   const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = async (data) => {
+    try {
+      const res = await authApi.login(data);
+      const token = res.data.data;
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        // console.log("token", token);
+        // Decode Header
+        const { accessToken } = jwtDecode(token, {
+          header: true,
+        });
+        console.log("accessToken", accessToken);
+        setIsAuthenticated(true);
+        login(accessToken);
+        navigate("/");
+      } else if (res.status === 400) {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
   const [showPass, setShowPass] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -16,12 +67,15 @@ const SignUp = () => {
       <div className="min-h-screen flex fle-col items-center justify-center py-6 px-4">
         <div className="grid md:grid-cols-2 items-center gap-4 max-w-6xl w-full">
           <div className="border border-gray-300 rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
-            {/* <form className="space-y-4" onSubmit={formik.handleSubmit}> */}
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-8">
                 <h3 className="text-gray-800 text-3xl font-extrabold">
-                  Sign Up
+                  Sign in
                 </h3>
+                <p className="text-gray-500 text-sm mt-4 leading-relaxed">
+                  Sign in to your account and explore a world of possibilities.
+                  Your journey begins here.
+                </p>
               </div>
 
               <div>
@@ -30,12 +84,11 @@ const SignUp = () => {
                 </label>
                 <div className="relative flex items-center">
                   <input
-                    name="email"
+                    // name="email"
                     type="text"
-                    // value={formik.values.email}
-                    // onChange={formik.handleChange}
+                    {...register("email")}
                     className="w-full text-sm text-gray-800 border border-gray-300 px-4 py-3 rounded-lg outline-blue-600"
-                    placeholder="Enter user name"
+                    placeholder="Enter Email"
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -56,49 +109,11 @@ const SignUp = () => {
                     ></path>
                   </svg>
                 </div>
-                {/* {formik.errors.email ? (
+                {errors.email && (
                   <p className="text-red-500 text-xs mt-1">
-                    {formik.errors.email}
+                    {errors.email.message}
                   </p>
-                ) : null} */}
-              </div>
-              <div>
-                <label className="text-gray-800 text-sm mb-2 block text-left">
-                  UserName
-                </label>
-                <div className="relative flex items-center">
-                  <input
-                    name="email"
-                    type="text"
-                    // value={formik.values.email}
-                    // onChange={formik.handleChange}
-                    className="w-full text-sm text-gray-800 border border-gray-300 px-4 py-3 rounded-lg outline-blue-600"
-                    placeholder="Enter user name"
-                  />
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="#bbb"
-                    stroke="#bbb"
-                    className="w-[18px] h-[18px] absolute right-4"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      cx="10"
-                      cy="7"
-                      r="6"
-                      data-original="#000000"
-                    ></circle>
-                    <path
-                      d="M14 15H6a5 5 0 0 0-5 5 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 5 5 0 0 0-5-5zm8-4h-2.59l.3-.29a1 1 0 0 0-1.42-1.42l-2 2a1 1 0 0 0 0 1.42l2 2a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42l-.3-.29H22a1 1 0 0 0 0-2z"
-                      data-original="#000000"
-                    ></path>
-                  </svg>
-                </div>
-                {/* {formik.errors.email ? (
-                  <p className="text-red-500 text-xs mt-1">
-                    {formik.errors.email}
-                  </p>
-                ) : null} */}
+                )}
               </div>
               <div>
                 <label className="text-gray-800 text-sm mb-2 block text-left">
@@ -106,10 +121,9 @@ const SignUp = () => {
                 </label>
                 <div className="relative flex items-center">
                   <input
-                    name="password"
+                    // name="password"
+                    {...register("password")}
                     type={showPass ? "text" : "password"}
-                    // value={formik.values.password}
-                    // onChange={formik.handleChange}
                     className="w-full text-sm text-gray-800 border border-gray-300 px-4 py-3 rounded-lg outline-blue-600"
                     placeholder="Enter password"
                   />
@@ -144,18 +158,46 @@ const SignUp = () => {
                     </svg>
                   )}
                 </div>
-                {/* {formik.errors.password ? (
+                {errors.password && (
                   <p className="text-red-500 text-xs mt-1">
-                    {formik.errors.password}
+                    {errors.password.message}
                   </p>
-                ) : null} */}
+                )}
               </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center">
+                  <input
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label
+                    for="remember-me"
+                    className="ml-3 block text-sm text-gray-800"
+                  >
+                    Remember me
+                  </label>
+                </div>
+
+                <div className="text-sm">
+                  <Link
+                    to="#"
+                    className="text-blue-600 hover:underline font-semibold"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
+              </div>
+
               <div className="!mt-8">
                 <button
                   type="submit"
                   className="w-full shadow-xl py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                 >
-                  Sign Up
+                  Log in
                 </button>
                 <span className="flex items-center justify-center w-full m-2 ">
                   or
@@ -180,4 +222,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Login;

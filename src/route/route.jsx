@@ -1,8 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
-import Login from "../page/Login";
 import Layout from "./Layout";
 import HomePage from "../page/HomePage";
-import SignUp from "../page/SignUp";
 import MovieDetail from "../page/MovieDetail";
 import SearchPage from "../page/SearchPage";
 import AdminLayout from "../dashboard/AdminLayout";
@@ -10,6 +8,10 @@ import Dashboard from "../dashboard/page/Dash";
 import Settings from "../dashboard/page/Settings";
 import Tables from "../dashboard/page/Tables";
 import Profile from "../components/Profile";
+
+import VerifyRedirect from "../page/auth/VerifyRedirect";
+import Login from "../page/auth/Login";
+import SignUp from "../page/auth/SignUp";
 
 export const router = createBrowserRouter([
   {
@@ -39,18 +41,14 @@ export const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
-  // {
-  //   path: "/profile",
-  //   element: <Profile />,
-  // },
+  {
+    path: "/auth/redirect/verify",
+    element: <VerifyRedirect />,
+  },
   {
     path: "/signup",
     element: <SignUp />,
   },
-  // {
-  //   path: "/admin",
-  //   element: <AdminLayout />,
-  // },
   {
     path: "/admin",
     element: <AdminLayout />, // Layout riêng cho admin

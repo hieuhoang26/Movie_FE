@@ -1,9 +1,29 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 // import Navbar from "components/Navbars/AuthNavbar.js";
 import teamImage from "../assets/img/team-1-800x800.jpg";
+import { AuthContext } from "../context/AuthContext";
+import { adminUserApi } from "../api/UserAcc";
 
 export default function Profile() {
+  const { userId } = useContext(AuthContext);
+
+  // const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (userId) {
+      adminUserApi
+        .getById(userId)
+        .then((res) => {
+          console.log(res);
+          // setUser(res.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching profile:", error);
+        });
+    }
+  }, [userId]);
+
   return (
     <>
       {/* <Navbar transparent /> */}

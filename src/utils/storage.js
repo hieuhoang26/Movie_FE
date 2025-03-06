@@ -22,11 +22,11 @@ export const getAccessTokenFromLS = () =>
 export const getRefreshTokenFromLS = () =>
   localStorage.getItem("refreshToken") || "";
 
-// export const getProfileFromLS = () => {
-//   const result = localStorage.getItem("profile");
-//   return result ? JSON.parse(result) : null;
-// };
+export const getProfileFromLS = () => {
+  const result = localStorage.getItem("profile");
+  return result ? JSON.parse(result) : null;
+};
 
-// export const setProfileToLS = (profile) => {
-//   localStorage.setItem("profile", JSON.stringify(profile));
-// };
+export const setProfileToLS = (profile) => {
+  localStorage.setItem("profile", JSON.stringify(profile));
+};

@@ -1,8 +1,8 @@
 import http from "./http";
 
-export const URL_LOGIN = "api/v1/auth/login";
-export const URL_REGISTER = "api/v1/auth/register";
-export const URL_VERIFY = "api/v1/auth/verify";
+export const URL_LOGIN = "auth/login";
+export const URL_REGISTER = "auth/register";
+export const URL_VERIFY = "auth/verify";
 // export const URL_LOGOUT = "auth/logout";
 // export const URL_REFRESH = "auth/refresh";
 

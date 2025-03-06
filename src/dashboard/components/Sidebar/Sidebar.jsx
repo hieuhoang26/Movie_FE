@@ -149,6 +149,69 @@ export default function Sidebar() {
                   Tables
                 </Link>
               </li>
+              <li className="items-center">
+                <Link
+                  className={
+                    "text-xs uppercase py-3 font-bold block " +
+                    (location.pathname === "/admin/tables"
+                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      : "text-blueGray-700 hover:text-blueGray-500")
+                  }
+                  to="/admin/movies"
+                >
+                  <i
+                    className={
+                      "fas fa-table mr-2 text-sm " +
+                      (location.pathname === "/admin/movies"
+                        ? "opacity-75"
+                        : "text-blueGray-300")
+                    }
+                  ></i>{" "}
+                  Movies
+                </Link>
+              </li>
+              <li className="items-center">
+                <Link
+                  className={
+                    "text-xs uppercase py-3 font-bold block " +
+                    (location.pathname === "/admin/tables"
+                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      : "text-blueGray-700 hover:text-blueGray-500")
+                  }
+                  to="/admin/category"
+                >
+                  <i
+                    className={
+                      "fas fa-table mr-2 text-sm " +
+                      (location.pathname === "/admin/category"
+                        ? "opacity-75"
+                        : "text-blueGray-300")
+                    }
+                  ></i>{" "}
+                  Category
+                </Link>
+              </li>
+              <li className="items-center">
+                <Link
+                  className={
+                    "text-xs uppercase py-3 font-bold block " +
+                    (location.pathname === "/admin/user"
+                      ? "text-lightBlue-500 hover:text-lightBlue-600"
+                      : "text-blueGray-700 hover:text-blueGray-500")
+                  }
+                  to="/admin/users"
+                >
+                  <i
+                    className={
+                      "fas fa-table mr-2 text-sm " +
+                      (location.pathname === "/admin/users"
+                        ? "opacity-75"
+                        : "text-blueGray-300")
+                    }
+                  ></i>{" "}
+                  Users
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CardTable from "../components/Card/CardTable";
-import ModalExample from "../components/Modal/ModalCreate";
+// import ModalExample from "../components/Modal/ModalCreate";
 
 // components
 
@@ -23,7 +23,7 @@ export default function Tables() {
         <div className="w-full px-4">
           <CardTable />
         </div>
-        {isOpen && <ModalExample isOpen={isOpen} setIsOpen={setIsOpen} />}
+        {/* {isOpen && <ModalExample isOpen={isOpen} setIsOpen={setIsOpen} />} */}
       </div>
     </>
   );

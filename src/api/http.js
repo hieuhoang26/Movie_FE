@@ -7,13 +7,12 @@ import {
   setRefreshTokenToLS,
 } from "../utils/storage";
 
-const baseUrl = "http://localhost:6868/";
+const baseUrl = "http://localhost:6868/api/v1/";
 
 class Http {
   constructor() {
     this.accessToken = getAccessTokenFromLS();
     this.refreshToken = getRefreshTokenFromLS();
-    this.refreshTokenRequest = null;
 
     this.instance = axios.create({
       baseURL: baseUrl,
@@ -24,20 +23,20 @@ class Http {
     });
 
     // Interceptor để thêm accessToken vào request
-    // this.instance.interceptors.request.use(
-    //   (config) => {
-    //     if (this.accessToken) {
-    //       config.headers.Authorization = `Bearer ${this.accessToken}`;
-    //     }
-    //     return config;
-    //   },
-    //   (error) => Promise.reject(error)
-    // );
+    this.instance.interceptors.request.use(
+      (config) => {
+        if (this.accessToken) {
+          config.headers.Authorization = `Bearer ${this.accessToken}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
     // Interceptor để xử lý lỗi response (ví dụ: token hết hạn)
     this.instance.interceptors.response.use(
       (response) => {
-        if (response.config.url.includes("api/v1/auth/login")) {
+        if (response.config.url.includes("auth/login")) {
           console.log(response);
           const token = response.data.data;
           const { accessToken, refreshToken } = jwtDecode(token, {

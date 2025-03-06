@@ -1,7 +1,12 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import { clearLS, getAccessTokenFromLS } from "../utils/storage";
+import {
+  clearLS,
+  getAccessTokenFromLS,
+  getProfileFromLS,
+  setProfileToLS,
+} from "../utils/storage";
 
 const AuthContext = createContext();
 
@@ -9,27 +14,31 @@ const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     Boolean(getAccessTokenFromLS())
   );
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState();
   const [role, setRole] = useState();
-  const [userName, setUserName] = useState();
-  const [email, setEmail] = useState();
+
+  useEffect(() => {
+    const storedUser = getProfileFromLS();
+    if (storedUser) {
+      setUserId(storedUser.id);
+      setRole(storedUser.role);
+    }
+  }, []);
 
   const login = (accessToken) => {
-    const { id, userName, email, roleName } = jwtDecode(accessToken);
+    const decoded = jwtDecode(accessToken);
+    console.log("Decoded token inside login:", decoded);
+    const { id, roleName } = decoded;
     setUserId(id);
     setRole(roleName);
-    setUserName(userName);
-    setEmail(email);
+    setProfileToLS({ id, role: roleName });
   };
 
   const logout = () => {
     setUserId(null);
     setRole(null);
-    setUserName(null);
-    setEmail(null);
     setIsAuthenticated(false);
     clearLS();
-    window.location.reload();
   };
 
   return (
@@ -41,9 +50,6 @@ const AuthProvider = ({ children }) => {
         login,
         logout,
         role,
-        userName,
-        setUserName,
-        // authAxios,
       }}
     >
       {children}

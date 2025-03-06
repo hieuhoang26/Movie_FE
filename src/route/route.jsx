@@ -7,11 +7,14 @@ import AdminLayout from "../dashboard/AdminLayout";
 import Dashboard from "../dashboard/page/Dash";
 import Settings from "../dashboard/page/Settings";
 import Tables from "../dashboard/page/Tables";
-import Profile from "../components/Profile";
 
 import VerifyRedirect from "../page/auth/VerifyRedirect";
 import Login from "../page/auth/Login";
 import SignUp from "../page/auth/SignUp";
+import UserManager from "../dashboard/page/UserManager";
+import CategoryManager from "../dashboard/page/CategoryManager";
+import Profile from "../page/Profile";
+import MovieManager from "../dashboard/page/MovieManager";
 
 export const router = createBrowserRouter([
   {
@@ -64,6 +67,18 @@ export const router = createBrowserRouter([
       {
         path: "tables",
         element: <Tables />,
+      },
+      {
+        path: "movies",
+        element: <MovieManager />,
+      },
+      {
+        path: "category",
+        element: <CategoryManager />,
+      },
+      {
+        path: "users",
+        element: <UserManager />,
       },
       {
         index: true,

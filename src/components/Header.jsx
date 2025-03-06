@@ -6,7 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 import teamImage from "../assets/img/team-1-800x800.jpg";
 
 const Header = ({ onSearch }) => {
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, logout, role } = useContext(AuthContext);
   const [search, setSearch] = useState("");
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -27,8 +27,8 @@ const Header = ({ onSearch }) => {
           <a href="/" className="hover:text-red-700 text-white">
             Home
           </a>
-          <a href="#" className="hover:text-red-700 text-white">
-            About
+          <a href="/all" className="hover:text-red-700 text-white">
+            All
           </a>
         </nav>
       </div>
@@ -70,20 +70,20 @@ const Header = ({ onSearch }) => {
 
           {showDropdown && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg overflow-hidden z-50">
-              {/* {profile?.shopId && (
-                <Link
-                  to={`/dashboard/${profile?.shopId}`}
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                >
-                  Dashboard
-                </Link>
-              )} */}
               <Link
                 to="/profile"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               >
                 Profile
               </Link>
+              {role == "ADMIN" && (
+                <Link
+                  to="/admin"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Dashboard
+                </Link>
+              )}
               <Link
                 to="/"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"

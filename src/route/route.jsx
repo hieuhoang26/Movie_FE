@@ -17,6 +17,8 @@ import Profile from "../page/Profile";
 import MovieManager from "../dashboard/page/MovieManager";
 import AllMovie from "../page/AllMovie";
 import ProtectedRoute from "./ProtectedRoute";
+import SearchResults from "../components/SearchResults";
+
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +33,10 @@ export const router = createBrowserRouter([
       {
         path: "/all",
         element: <AllMovie />,
+      },
+      {
+        path: "/search",
+        element: <SearchResults  />,
       },
       {
         path: "/movie/:id",

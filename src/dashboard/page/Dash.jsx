@@ -1,5 +1,6 @@
 import CardPageVisits from "../components/Card/CardPageVisits";
 import CardSocialTraffic from "../components/Card/CardSocialTraffic";
+import ReviewCard from "../components/Review/ReviewCard";
 
 export default function Dashboard() {
   return (
@@ -10,6 +11,7 @@ export default function Dashboard() {
         </div>
         <div className="w-full xl:w-4/12 px-4">
           <CardSocialTraffic />
+          <ReviewCard />
         </div>
       </div>
     </>

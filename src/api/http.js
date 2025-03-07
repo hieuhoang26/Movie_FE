@@ -6,9 +6,11 @@ import {
   setAccessTokenToLS,
   setRefreshTokenToLS,
 } from "../utils/storage";
+import authApi from "./auth";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const baseUrl = "http://localhost:6868/api/v1/";
-
 class Http {
   constructor() {
     this.accessToken = getAccessTokenFromLS();
@@ -50,8 +52,39 @@ class Http {
         return response;
       },
       async (error) => {
-        if (error.response && error.response.status === 401) {
-          console.log("Token expired. Handle refresh here.");
+        // if (error.response && error.response.status === 401) {
+        //   console.log("Token expired. Handle refresh here.");
+        // }
+        const originalRequest = error.config;
+        if (
+          error.response &&
+          error.response.status === 401 &&
+          !originalRequest._retry
+        ) {
+          originalRequest._retry = true;
+
+          try {
+            const refreshToken = getRefreshTokenFromLS();
+            if (!refreshToken) {
+              console.log("No refresh token found, logging out.");
+              return Promise.reject(error);
+            }
+
+            const response = await authApi.refresh(refreshToken);
+
+            const { accessToken, refreshToken: newRefreshToken } =
+              response.data;
+
+            setAccessTokenToLS(accessToken);
+            setRefreshTokenToLS(newRefreshToken);
+            originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
+            return this.instance(originalRequest);
+          } catch (refreshError) {
+            console.log("Failed to refresh token, logging out.");
+            // logoutUser();
+            return Promise.reject(refreshError);
+          }
         }
         return Promise.reject(error);
       }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Filter from "../components/Filter";
 import SortDropdown from "../components/SortDropdown";
 import { FaFilter } from "react-icons/fa";
@@ -11,10 +12,12 @@ const AllMovie = () => {
   const [size, setSize] = useState(10); // Số phim trên mỗi trang
   const [totalPages, setTotalPages] = useState(1); // Tổng số trang
 
+  const navigate = useNavigate(); // Hook điều hướng
+
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await http.get(`/movie?page=${page}&size=${size}`);
+        const response = await http.get(`/user/movie?page=${page}&size=${size}`);
         console.log("Dữ liệu API:", response.data);
         setMovies(response.data.data?.content || []);
         setTotalPages(response.data.data?.totalPages || 1); // Lấy tổng số trang từ API
@@ -27,14 +30,9 @@ const AllMovie = () => {
     fetchMovies();
   }, [page, size]); // Gọi lại API khi `page` hoặc `size` thay đổi
 
-  // Chuyển sang trang trước
-  const prevPage = () => {
-    if (page > 0) setPage(page - 1);
-  };
-
-  // Chuyển sang trang kế tiếp
-  const nextPage = () => {
-    if (page < totalPages - 1) setPage(page + 1);
+  // Chuyển hướng đến trang chi tiết phim khi nhấn vào
+  const handleMovieClick = (movieId) => {
+    navigate(`/movie/${movieId}`);
   };
 
   return (
@@ -62,6 +60,7 @@ const AllMovie = () => {
               style={{
                 backgroundImage: `url(${movie.picture})`,
               }}
+              onClick={() => handleMovieClick(movie.id)} // Gọi hàm khi nhấn vào phim
             >
               <div className="bg-black w-full h-full opacity-40 absolute top-0 left-0 z-0" />
               <div className="relative p-4 flex flex-col items-center justify-end h-full">
@@ -74,7 +73,7 @@ const AllMovie = () => {
         {/* PHÂN TRANG */}
         <div className="flex justify-center mt-6 space-x-4">
           <button
-            onClick={prevPage}
+            onClick={() => setPage(page - 1)}
             disabled={page === 0}
             className={`p-2 px-4 rounded-lg ${page === 0 ? "bg-gray-500 cursor-not-allowed" : "bg-gray-700 hover:bg-gray-600"} text-white`}
           >
@@ -82,7 +81,7 @@ const AllMovie = () => {
           </button>
           <span>Trang {page + 1} / {totalPages}</span>
           <button
-            onClick={nextPage}
+            onClick={() => setPage(page + 1)}
             disabled={page >= totalPages - 1}
             className={`p-2 px-4 rounded-lg ${page >= totalPages - 1 ? "bg-gray-500 cursor-not-allowed" : "bg-gray-700 hover:bg-gray-600"} text-white`}
           >

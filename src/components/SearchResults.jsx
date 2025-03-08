@@ -6,13 +6,13 @@ const SearchResults = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const searchQuery = queryParams.get("q") || "";
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState([]); 
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await http.get(`/movie/search?keyword=${encodeURIComponent(searchQuery)}`);
-        setMovies(response.data.data || []);
+        const response = await http.get(`/user/movie/search?keyword=${encodeURIComponent(searchQuery)}`);
+        setMovies(response.data || []); // Không truy cập response.data.data
       } catch (error) {
         console.error("Lỗi khi lấy kết quả tìm kiếm:", error);
       }

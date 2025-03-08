@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
+import http from "../api/http"; // Import http từ api/http.js
 import {
-  FaStar,
-  FaStarHalfAlt,
-  FaClock,
-  FaImdb,
   FaTheaterMasks,
   FaCalendarAlt,
-  FaGlobe,
 } from "react-icons/fa";
 
 const comments = [
@@ -30,175 +26,80 @@ const comments = [
   },
 ];
 
+
 const MovieDetail = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
-  const [trailerUrl, setTrailerUrl] = useState("");
 
   useEffect(() => {
     const fetchMovie = async () => {
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${id}?language=en-US`,
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-              "Content-Type": "application/json;charset=utf-8",
-            },
-          }
-        );
-
-        const data = await response.json();
-        setMovie(data);
+        const response = await http.get(`user/movie/${id}`);
+        setMovie(response.data.data);
       } catch (error) {
-        console.error("Error fetching movie details:", error);
+        console.error("Lỗi khi lấy thông tin phim:", error);
       }
     };
 
     fetchMovie();
   }, [id]);
 
-  useEffect(() => {
-    const fetchTrailer = async () => {
-      try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`,
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-              "Content-Type": "application/json;charset=utf-8",
-            },
-          }
-        );
-        const data = await response.json();
-        if (data.results.length > 0) {
-          setTrailerUrl(
-            `https://www.youtube.com/watch?v=${data.results[0].key}`
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching trailer:", error);
-      }
-    };
-
-    fetchTrailer();
-  }, [id]);
-
-  const renderStars = (rating) => {
-    if (!rating) return null;
-    const stars = [];
-    const fullStars = Math.floor(rating / 2); // TMDB dùng thang 10, đổi thành 5 sao
-    const hasHalfStar = rating % 2 >= 1;
-
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<FaStar key={`star-${i}`} className="text-orange-500" />);
-    }
-    if (hasHalfStar) {
-      stars.push(<FaStarHalfAlt key="half-star" className="text-orange-500" />);
-    }
-    return stars;
-  };
-
   if (!movie) return <div>Loading...</div>;
 
   return (
-    <div className="h-full bg-black text-white min-h-screen pb-10 relative ">
+    <div className="h-full bg-black text-white min-h-screen pb-10 relative">
+      {/* Hiển thị video */}
       <div className="px-5 flex justify-center">
-        {trailerUrl && (
+        {movie.movie && (
           <div className="mb-6 w-full max-w-5xl">
-            <ReactPlayer
-              url={trailerUrl}
-              controls
-              width="100%"
-              height="500px"
-            />
+            <ReactPlayer url={movie.movie} controls width="100%" height="500px" />
           </div>
         )}
       </div>
 
-      {/* <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-12 px-4 sm:px-6 lg:px-8"> */}
+      {/* Thông tin chi tiết phim */}
       <div className="max-w-7xl mx-auto my-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Movie Poster */}
           <div className="relative group overflow-hidden rounded-lg shadow-2xl transition-transform duration-300 hover:scale-[1.02] flex justify-center">
             <img
-              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              src={movie.pictureURL}
               alt={movie.title}
-              className=" w-xl h-auto max-h-[400px] object-cover "
+              className="w-xl h-auto max-h-[400px] object-cover"
               onError={(e) => {
-                e.target.src =
-                  "https://via.placeholder.com/500x750?text=No+Image";
+                e.target.src = "https://via.placeholder.com/500x750?text=No+Image";
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
 
           {/* Movie Details */}
           <div className="space-y-6">
-            <div>
-              <h1 className="text-5xl font-bold text-white mb-2 tracking-tight">
-                {movie.title}
-              </h1>
-              <p className="text-xl text-gray-400">
-                {new Date(movie.release_date).getFullYear()}
-              </p>
-            </div>
+            <h1 className="text-5xl font-bold text-white mb-2">{movie.title}</h1>
+            <p className="text-xl text-gray-400">{movie.year}</p>
 
             <div className="flex flex-wrap gap-2">
-              {movie.genres?.map((genre) => (
-                <span
-                  key={genre.id}
-                  className="px-4 py-1 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors duration-200 cursor-pointer"
-                >
-                  {genre.name}
+              {movie.categories?.map((category) => (
+                <span key={category.id} className="px-4 py-1 bg-white/10 text-white rounded-full">
+                  {category.name}
                 </span>
               ))}
             </div>
 
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center">
-                {renderStars(movie.vote_average)}
-                <span className="ml-2 text-white">
-                  {movie.vote_average?.toFixed(1)}/10
-                </span>
-              </div>
-              <div className="flex items-center text-white">
-                <FaClock className="mr-2" />
-                {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m
-              </div>
-            </div>
-
-            <p className="text-gray-300 text-lg leading-relaxed">
-              {movie.overview}
-            </p>
+            <p className="text-gray-300 text-lg leading-relaxed">{movie.description}</p>
 
             <div className="grid grid-cols-2 gap-4 bg-white/5 p-6 rounded-lg">
               <div className="flex items-center space-x-2 text-gray-300">
                 <FaTheaterMasks />
-                <span>Director: Updating...</span>{" "}
-                {/* Fetch from API if needed */}
+                <span>Author: {movie.author}</span>
               </div>
               <div className="flex items-center space-x-2 text-gray-300">
                 <FaCalendarAlt />
-                <span>Release: {movie.release_date}</span>
-              </div>
-              <div className="flex items-center space-x-2 text-gray-300">
-                <FaGlobe />
-                <span>Language: {movie.original_language.toUpperCase()}</span>
-              </div>
-              <div className="flex items-center space-x-2 text-gray-300">
-                <FaImdb />
-                <span>
-                  Production: {movie.production_companies?.[0]?.name || "N/A"}
-                </span>
+                <span>Release: {movie.year}</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      {/* </div> */}
-
-      <div className="max-w-7xl mx-auto my-8 text-2xl font-bold ">
+        <div className="max-w-7xl mx-auto my-8 text-2xl font-bold ">
         <span>You may so like </span>
       </div>
 
@@ -243,6 +144,7 @@ const MovieDetail = () => {
             </div>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useLocation, useNavigate } from "react-router-dom"; 
 import http from "../api/http";
 
 const SearchResults = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Hook điều hướng
+  const navigate = useNavigate(); 
   const queryParams = new URLSearchParams(location.search);
   const searchQuery = queryParams.get("q") || "";
   const [movies, setMovies] = useState([]);
@@ -22,7 +22,6 @@ const SearchResults = () => {
     if (searchQuery) fetchMovies();
   }, [searchQuery]);
 
-  // ✅ Chuyển hướng đến trang chi tiết phim khi nhấn vào
   const handleMovieClick = (movieId) => {
     navigate(`/movie/${movieId}`);
   };
@@ -39,7 +38,7 @@ const SearchResults = () => {
             movies.map((movie) => (
               <div
                 key={movie.id}
-                onClick={() => handleMovieClick(movie.id)} // ✅ Thêm sự kiện click
+                onClick={() => handleMovieClick(movie.id)} 
                 className="bg-cover bg-no-repeat bg-center w-[200px] h-[300px] relative hover:scale-110 transition-transform duration-500 ease-in-out cursor-pointer"
                 style={{
                   backgroundImage: `url(${movie.picture})`,

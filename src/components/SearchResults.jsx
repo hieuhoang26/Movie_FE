@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
 import http from "../api/http";
 
 const SearchResults = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // Hook điều hướng
   const queryParams = new URLSearchParams(location.search);
   const searchQuery = queryParams.get("q") || "";
-  const [movies, setMovies] = useState([]); 
+  const [movies, setMovies] = useState([]);
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         const response = await http.get(`/user/movie/search?keyword=${encodeURIComponent(searchQuery)}`);
-        setMovies(response.data || []); // Không truy cập response.data.data
+        setMovies(response.data || []);
       } catch (error) {
         console.error("Lỗi khi lấy kết quả tìm kiếm:", error);
       }
@@ -21,16 +22,24 @@ const SearchResults = () => {
     if (searchQuery) fetchMovies();
   }, [searchQuery]);
 
+  // ✅ Chuyển hướng đến trang chi tiết phim khi nhấn vào
+  const handleMovieClick = (movieId) => {
+    navigate(`/movie/${movieId}`);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white pb-10 pt-20">
       <div className="my-10 px-10 max-w-full">
-        <h2 className="text-xl uppercase mb-4 mt-10">Search Results for "{searchQuery}"</h2>
+        <h2 className="text-xl uppercase mb-4 mt-10">
+          Search Results for "{searchQuery}"
+        </h2>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
           {movies.length > 0 ? (
             movies.map((movie) => (
               <div
                 key={movie.id}
+                onClick={() => handleMovieClick(movie.id)} // ✅ Thêm sự kiện click
                 className="bg-cover bg-no-repeat bg-center w-[200px] h-[300px] relative hover:scale-110 transition-transform duration-500 ease-in-out cursor-pointer"
                 style={{
                   backgroundImage: `url(${movie.picture})`,

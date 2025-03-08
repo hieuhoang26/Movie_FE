@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 import Filter from "../components/Filter";
 import SortDropdown from "../components/SortDropdown";
 import { FaFilter } from "react-icons/fa";
-import http from "../api/http"; // Import module http đã xử lý token
-
+import http from "../api/http"; 
 const AllMovie = () => {
   const [movies, setMovies] = useState([]);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-  const [page, setPage] = useState(0); // Trang hiện tại
-  const [size, setSize] = useState(10); // Số phim trên mỗi trang
-  const [totalPages, setTotalPages] = useState(1); // Tổng số trang
+  const [page, setPage] = useState(0); 
+  const [size, setSize] = useState(10); 
+  const [totalPages, setTotalPages] = useState(1); 
 
-  const navigate = useNavigate(); // Hook điều hướng
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -20,7 +19,7 @@ const AllMovie = () => {
         const response = await http.get(`/user/movie?page=${page}&size=${size}`);
         console.log("Dữ liệu API:", response.data);
         setMovies(response.data.data?.content || []);
-        setTotalPages(response.data.data?.totalPages || 1); // Lấy tổng số trang từ API
+        setTotalPages(response.data.data?.totalPages || 1); 
 
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error);
@@ -28,9 +27,8 @@ const AllMovie = () => {
     };
 
     fetchMovies();
-  }, [page, size]); // Gọi lại API khi `page` hoặc `size` thay đổi
+  }, [page, size]); 
 
-  // Chuyển hướng đến trang chi tiết phim khi nhấn vào
   const handleMovieClick = (movieId) => {
     navigate(`/movie/${movieId}`);
   };

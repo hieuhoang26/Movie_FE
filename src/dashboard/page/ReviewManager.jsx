@@ -1,112 +1,78 @@
+import { Star } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import {
-  FiSearch,
-  FiFilter,
-  FiDownload,
-  FiEye,
-  FiCheck,
-  FiX,
-  FiFlag,
-  FiTrash2,
-  FiChevronLeft,
-  FiChevronRight,
-} from "react-icons/fi";
+import { FiSearch, FiFilter, FiDownload } from "react-icons/fi";
+import { adminReviewApi } from "../../api/AdminReview";
+import AsyncCreatableSelect from "react-select/async-creatable";
+import { adminUserApi } from "../../api/AdminUser";
+import ReactPaginate from "react-paginate";
 // import { format } from "date-fns";
 
 const ReviewManager = () => {
   const [reviews, setReviews] = useState([]);
-  const [filteredReviews, setFilteredReviews] = useState([]);
-  const [selectedReview, setSelectedReview] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    movieTitle: "",
-    minRating: 1,
-    maxRating: 5,
-    status: "all",
-    startDate: "",
-    endDate: "",
-    searchQuery: "",
-    category: "",
-    reportStatus: "all",
-  });
-
-  const mockReviews = [
-    {
-      id: 1,
-      userName: "John Doe",
-      movieTitle: "Inception",
-      rating: 5,
-      reviewText:
-        "A mind-bending masterpiece that keeps you guessing until the end.",
-      status: "approved",
-      timestamp: new Date(2024, 0, 15),
-      userAvatar:
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde",
-      spoilerAlert: false,
-      helpful: 45,
-      reported: false,
-      category: "action",
-    },
-    {
-      id: 2,
-      userName: "Jane Smith",
-      movieTitle: "The Dark Knight",
-      rating: 4,
-      reviewText: "Heath Ledger's performance as the Joker is legendary.",
-      status: "pending",
-      timestamp: new Date(2024, 0, 16),
-      userAvatar:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-      spoilerAlert: true,
-      helpful: 32,
-      reported: true,
-      category: "drama",
-    },
-  ];
+  const [users, setUsers] = useState({});
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
-    setReviews(mockReviews);
-    setFilteredReviews(mockReviews);
+    fetchReviews(1);
   }, []);
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
+  const fetchReviews = async (page) => {
+    try {
+      const response = await adminReviewApi.getAllReview(page, 6);
+      // console.log(response.data);
+      setReviews(response.data.data.data);
+      setTotalPages(response.data.data.totalPages);
+    } catch (error) {
+      console.error("Error fetching review:", error);
+    }
+  };
+  const fetchUserById = async (id) => {
+    if (users[id]) return; // Tránh gọi lại API nếu đã có thông tin user
+
+    try {
+      const response = await adminUserApi.getUserById(id);
+      setUsers((prev) => ({ ...prev, [id]: response.data.data })); // Lưu vào state
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  };
+  useEffect(() => {
+    reviews.forEach((review) => fetchUserById(review.userId));
+  }, [reviews]);
+
+  const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
+    try {
+      await adminReviewApi.deleteAdminReview(reviewId);
+      fetchReviews(1);
+      setReviews((prevReviews) =>
+        prevReviews.filter((review) => review.id !== reviewId)
+      );
+      console.log("Review deleted successfully");
+    } catch (error) {
+      console.error("Error deleting review:", error);
+    }
   };
 
-  const handleSearch = () => {
-    let filtered = reviews.filter((review) => {
-      const matchesTitle = review.movieTitle
-        .toLowerCase()
-        .includes(filters.movieTitle.toLowerCase());
-      const matchesCategory =
-        !filters.category || review.category === filters.category;
-      const matchesStatus =
-        filters.status === "all" || review.status === filters.status;
-      const matchesReport =
-        filters.reportStatus === "all" ||
-        (filters.reportStatus === "reported"
-          ? review.reported
-          : !review.reported);
+  // const handleFilterChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFilters((prev) => ({ ...prev, [name]: value }));
+  // };
 
-      return matchesTitle && matchesCategory && matchesStatus && matchesReport;
-    });
-    setFilteredReviews(filtered);
+  // const handleSearch = () => {
+
+  // };
+
+  const handlePageClick = (selectedPage) => {
+    const newPage = selectedPage.selected + 1;
+    setCurrentPage(selectedPage.selected);
+    fetchReviews(newPage);
   };
 
-  const handleStatusChange = (reviewId, newStatus) => {
-    const updatedReviews = reviews.map((review) =>
-      review.id === reviewId ? { ...review, status: newStatus } : review
-    );
-    setReviews(updatedReviews);
-    setFilteredReviews(updatedReviews);
-  };
+  const handleStatusChange = (reviewId, newStatus) => {};
 
-  const handleDelete = (reviewId) => {
-    const updatedReviews = reviews.filter((review) => review.id !== reviewId);
-    setReviews(updatedReviews);
-    setFilteredReviews(updatedReviews);
-  };
+  const handleDelete = (reviewId) => {};
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -120,14 +86,14 @@ const ReviewManager = () => {
             <h3 className="text-lg font-semibold text-gray-700">
               Total Reviews
             </h3>
-            <p className="text-3xl font-bold text-blue-600">{reviews.length}</p>
+            <p className="text-3xl font-bold text-blue-600">10</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
             <h3 className="text-lg font-semibold text-gray-700">
               Pending Reviews
             </h3>
             <p className="text-3xl font-bold text-yellow-600">
-              {reviews.filter((r) => r.status === "pending").length}
+              {/* {reviews.filter((r) => r.status === "pending").length} */}10
             </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
@@ -160,8 +126,8 @@ const ReviewManager = () => {
               <input
                 type="text"
                 name="movieTitle"
-                value={filters.movieTitle}
-                onChange={handleFilterChange}
+                // value={filters.movieTitle}
+                // onChange={handleFilterChange}
                 className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Search by movie title"
               />
@@ -172,8 +138,8 @@ const ReviewManager = () => {
               </label>
               <select
                 name="category"
-                value={filters.category}
-                onChange={handleFilterChange}
+                // value={filters.category}
+                // onChange={handleFilterChange}
                 className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">All Categories</option>
@@ -188,8 +154,8 @@ const ReviewManager = () => {
               </label>
               <select
                 name="status"
-                value={filters.status}
-                onChange={handleFilterChange}
+                // value={filters.status}
+                // onChange={handleFilterChange}
                 className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="all">All Status</option>
@@ -204,8 +170,8 @@ const ReviewManager = () => {
               </label>
               <select
                 name="reportStatus"
-                value={filters.reportStatus}
-                onChange={handleFilterChange}
+                // value={filters.reportStatus}
+                // onChange={handleFilterChange}
                 className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="all">All Reviews</option>
@@ -216,7 +182,7 @@ const ReviewManager = () => {
           </div>
           <div className="mt-4 flex justify-end space-x-2">
             <button
-              onClick={handleSearch}
+              // onClick={handleSearch}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center transform hover:scale-105 transition-transform"
             >
               <FiSearch className="mr-2" /> Search
@@ -226,110 +192,81 @@ const ReviewManager = () => {
             </button>
           </div>
         </div>
-
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Movie
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Rating
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Category
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredReviews.map((review) => (
-                <tr key={review.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <img
-                        className="h-8 w-8 rounded-full"
-                        src={review.userAvatar}
-                        alt={review.userName}
-                      />
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {review.userName}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {review.movieTitle}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {review.rating}/5
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        review.status === "approved"
-                          ? "bg-green-100 text-green-800"
-                          : review.status === "rejected"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {review.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {review.category}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {/* {format(review.timestamp, "MMM d, yyyy")} */}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => openModal(review)}
-                      className="text-blue-600 hover:text-blue-900 mx-1"
-                    >
-                      <FiEye />
-                    </button>
-                    <button
-                      onClick={() => handleStatusChange(review.id, "approved")}
-                      className="text-green-600 hover:text-green-900 mx-1"
-                    >
-                      <FiCheck />
-                    </button>
-                    <button
-                      onClick={() => handleStatusChange(review.id, "rejected")}
-                      className="text-red-600 hover:text-red-900 mx-1"
-                    >
-                      <FiX />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(review.id)}
-                      className="text-gray-600 hover:text-gray-900 mx-1"
-                    >
-                      <FiTrash2 />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-3 gap-3">
+          {reviews.map((review) => {
+            const user = users[review.userId];
+            return (
+              <div
+                key={review.id}
+                className="max-w-md p-4 bg-white shadow-md rounded-2xl border"
+              >
+                <div className="flex items-center gap-4">
+                  <img
+                    src={user?.avatar || "https://via.placeholder.com/50"}
+                    alt="User Avatar"
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <div>
+                    <h3 className="font-semibold text-lg">
+                      {user?.name || "Loading..."}
+                    </h3>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center gap-1">
+                  {[...Array(parseInt(review.rating))].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="w-4 h-4 text-yellow-500 fill-yellow-500"
+                    />
+                  ))}
+                  {[...Array(5 - parseInt(review.rating))].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-gray-300" />
+                  ))}
+                  <span className="text-gray-500 text-sm ml-2">
+                    {new Date(
+                      parseInt(review.createdDate)
+                    ).toLocaleDateString()}
+                  </span>
+                </div>
+                <p className="text-gray-700 mt-2 text-sm">{review.comment}</p>
+                <div className="mt-3 flex gap-2">
+                  <button className="px-4 py-1.5 text-sm border rounded-lg bg-gray-100 hover:bg-gray-200">
+                    Public Comment
+                  </button>
+                  <button
+                    className="px-4 py-1.5 text-sm border rounded-lg bg-red-500 text-white hover:bg-red-600"
+                    onClick={() => handleDeleteReview(review.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex justify-center mt-6">
+          <ReactPaginate
+            previousLabel={"← Previous"}
+            nextLabel={"Next →"}
+            breakLabel={"..."}
+            pageCount={totalPages}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={3}
+            onPageChange={handlePageClick}
+            containerClassName={"flex list-none gap-2"}
+            pageClassName={
+              "px-4 py-2 border rounded-lg cursor-pointer hover:bg-gray-200"
+            }
+            activeClassName={"bg-blue-500 text-white"}
+            previousClassName={
+              "px-4 py-2 border rounded-lg cursor-pointer hover:bg-gray-200"
+            }
+            nextClassName={
+              "px-4 py-2 border rounded-lg cursor-pointer hover:bg-gray-200"
+            }
+            disabledClassName={"opacity-50 cursor-not-allowed"}
+            forcePage={currentPage}
+          />
         </div>
       </div>
     </div>

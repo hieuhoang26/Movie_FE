@@ -6,6 +6,9 @@ export const adminUserApi = {
   getAllUser(page, size) {
     return http.get(`${URL_AdminUser}?page=${page}&size=${size}`);
   },
+  getUserById(id) {
+    return http.get(`${URL_AdminUser}/${id}`);
+  },
   createAdminUser(user) {
     return http.delete(`${URL_AdminUser}`, user);
   },

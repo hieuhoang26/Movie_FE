@@ -24,7 +24,7 @@ export default function UserManager() {
 
   const fetchUsers = async (page) => {
     try {
-      const response = await adminUserApi.getAllUser(page, 2);
+      const response = await adminUserApi.getAllUser(page, 5);
       console.log(response.data);
       setUsers(response.data.data.data);
       setTotalPages(response.data.data.totalPages);

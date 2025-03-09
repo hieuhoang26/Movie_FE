@@ -202,7 +202,12 @@ const ReviewManager = () => {
               >
                 <div className="flex items-center gap-4">
                   <img
-                    src={user?.avatar || "https://via.placeholder.com/50"}
+                    src={
+                      user?.avatar ||
+                      `https://randomuser.me/api/portraits/men/${Math.floor(
+                        Math.random() * 100
+                      )}.jpg`
+                    }
                     alt="User Avatar"
                     className="w-12 h-12 rounded-full"
                   />

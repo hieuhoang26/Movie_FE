@@ -8,11 +8,14 @@ export const UserReviewApi = {
       `${URL_UserReview}?movie=${movie}&page=${page}&size=${size}`
     );
   },
-
-  createReview() {
-    return http.get(`${URL_UserReview}`);
+  createReview(movieId, rating, comment) {
+    return http.post(`${URL_UserReview}`, {
+      movieId: movieId,
+      rating: rating,
+      comment: comment,
+    });
   },
-  deleteUser(id) {
+  deleteReview(id) {
     return http.delete(`${URL_UserReview}/${id}`);
   },
 };

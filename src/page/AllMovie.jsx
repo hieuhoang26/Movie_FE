@@ -22,7 +22,7 @@ const AllMovie = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await http.get(`/movie?page=${page}&size=${size}`);
+        const response = await http.get(`user/movie?page=${page}&size=${size}`);
         // console.log("Dữ liệu API:", response.data);
         setMovies(response.data.data?.content || []);
         setTotalPages(response.data.data?.totalPages || 1);

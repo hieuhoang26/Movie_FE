@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import http from "../api/http";
+import testImage from "../assets/img/testimg.jpg";
 
 const SearchResults = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const searchQuery = queryParams.get("q") || "";
+
   const [movies, setMovies] = useState([]);
-  console.log(searchQuery);
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await http.get(`movie/search?keyword=${searchQuery}`);
+        const response = await http.get(
+          `/user/movie/search?keyword=${searchQuery}`
+        );
+        console.log(response);
         setMovies(response.data || []);
       } catch (error) {
         console.error("Lỗi khi lấy kết quả tìm kiếm:", error);

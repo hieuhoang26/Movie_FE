@@ -16,6 +16,9 @@ import MovieManager from "../dashboard/page/MovieManager";
 import AllMovie from "../page/AllMovie";
 import ProtectedRoute from "./ProtectedRoute";
 import ReviewManager from "../dashboard/page/ReviewManager";
+import MovieDetailDemo from "../page/MovieDetailDemo";
+import SearchResults from "../page/SearchResults";
+import { TestReview } from "../components/TestReview";
 
 export const router = createBrowserRouter([
   {
@@ -36,7 +39,15 @@ export const router = createBrowserRouter([
         element: <MovieDetail />,
       },
       {
+        path: "/detail/:id",
+        element: <MovieDetailDemo />,
+      },
+      {
         path: "/search",
+        element: <SearchResults />,
+      },
+      {
+        path: "/find",
         element: <SearchPage />,
       },
       {

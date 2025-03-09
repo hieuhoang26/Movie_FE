@@ -13,6 +13,11 @@ const Header = ({ onSearch }) => {
 
   const navigate = useNavigate();
 
+  // const handleSearch = () => {
+  //   if (search.trim() !== "") {
+  //     navigate(`/search?q=${search.trim()}`);
+  //   }
+  // };
   const handleSearch = () => {
     if (search.trim() !== "") {
       navigate(`/search?q=${search.trim()}`);

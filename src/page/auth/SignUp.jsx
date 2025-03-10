@@ -194,8 +194,14 @@ const SignUp = () => {
                 >
                   Sign Up
                 </button>
-                <span className="flex items-center justify-center w-full m-2 ">
-                  or
+                <span className="flex items-center justify-center w-full my-2 space-x-2">
+                  <span>or</span>
+                  <span
+                    className="text-blue-500 cursor-pointer hover:underline"
+                    onClick={() => navigate("/login")}
+                  >
+                    Login
+                  </span>
                 </span>
                 <button className="flex items-center justify-center w-full border border-gray-300 rounded-lg py-2 px-4 text-gray-700 hover:bg-gray-100">
                   <FcGoogle className="w-6 h-6 mr-2" />

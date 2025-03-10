@@ -19,6 +19,7 @@ import ReviewManager from "../dashboard/page/ReviewManager";
 import MovieDetailDemo from "../page/MovieDetailDemo";
 import SearchResults from "../page/SearchResults";
 import { TestReview } from "../components/TestReview";
+import ForgotPassword from "../page/auth/ForgotPassword";
 
 export const router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ export const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUp />,
+  },
+  {
+    path: "/forgot",
+    element: <ForgotPassword />,
   },
   {
     path: "/admin",

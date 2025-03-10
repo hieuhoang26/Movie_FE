@@ -5,8 +5,6 @@ import MovieDetail from "../page/MovieDetail";
 import SearchPage from "../page/SearchPage";
 import AdminLayout from "../dashboard/AdminLayout";
 import Dashboard from "../dashboard/page/Dash";
-import Settings from "../dashboard/page/Settings";
-import Tables from "../dashboard/page/Tables";
 
 import VerifyRedirect from "../page/auth/VerifyRedirect";
 import Login from "../page/auth/Login";
@@ -17,8 +15,11 @@ import Profile from "../page/Profile";
 import MovieManager from "../dashboard/page/MovieManager";
 import AllMovie from "../page/AllMovie";
 import ProtectedRoute from "./ProtectedRoute";
-import SearchResults from "../components/SearchResults";
-
+import ReviewManager from "../dashboard/page/ReviewManager";
+import MovieDetailDemo from "../page/MovieDetailDemo";
+import SearchResults from "../page/SearchResults";
+import { TestReview } from "../components/TestReview";
+import ForgotPassword from "../page/auth/ForgotPassword";
 
 export const router = createBrowserRouter([
   {
@@ -35,21 +36,21 @@ export const router = createBrowserRouter([
         element: <AllMovie />,
       },
       {
-        path: "/search",
-        element: <SearchResults  />,
-      },
-      {
         path: "/movie/:id",
         element: <MovieDetail />,
       },
       {
+        path: "/detail/:id",
+        element: <MovieDetailDemo />,
+      },
+      {
         path: "/search",
+        element: <SearchResults />,
+      },
+      {
+        path: "/find",
         element: <SearchPage />,
       },
-      // {
-      //   path: "/profile",
-      //   element: <Profile />,
-      // },
       {
         path: "/profile",
         element: <ProtectedRoute />,
@@ -74,78 +75,78 @@ export const router = createBrowserRouter([
     path: "/signup",
     element: <SignUp />,
   },
-  // {
-  //   path: "/admin",
-  //   element: <AdminLayout />, // Layout riêng cho admin
-  //   children: [
-  //     {
-  //       path: "dashboard",
-  //       element: <Dashboard />,
-  //     },
-  //     {
-  //       path: "settings",
-  //       element: <Settings />,
-  //     },
-  //     {
-  //       path: "tables",
-  //       element: <Tables />,
-  //     },
-  //     {
-  //       path: "movies",
-  //       element: <MovieManager />,
-  //     },
-  //     {
-  //       path: "category",
-  //       element: <CategoryManager />,
-  //     },
-  //     {
-  //       path: "users",
-  //       element: <UserManager />,
-  //     },
-  //     {
-  //       index: true,
-  //       element: <Dashboard />,
-  //     },
-  //   ],
-  // },
+  {
+    path: "/forgot",
+    element: <ForgotPassword />,
+  },
   {
     path: "/admin",
-    element: <ProtectedRoute />,
+    element: <AdminLayout />, // Layout riêng cho admin
     children: [
       {
-        path: "",
-        element: <AdminLayout />,
-        children: [
-          {
-            index: true,
-            element: <Dashboard />,
-          },
-          {
-            path: "dashboard",
-            element: <Dashboard />,
-          },
-          {
-            path: "settings",
-            element: <Settings />,
-          },
-          {
-            path: "tables",
-            element: <Tables />,
-          },
-          {
-            path: "movies",
-            element: <MovieManager />,
-          },
-          {
-            path: "category",
-            element: <CategoryManager />,
-          },
-          {
-            path: "users",
-            element: <UserManager />,
-          },
-        ],
+        path: "dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "movies",
+        element: <MovieManager />,
+      },
+      {
+        path: "category",
+        element: <CategoryManager />,
+      },
+      {
+        path: "users",
+        element: <UserManager />,
+      },
+      {
+        path: "reviews",
+        element: <ReviewManager />,
+      },
+      {
+        index: true,
+        element: <Dashboard />,
       },
     ],
   },
+  // {
+  //   path: "/admin",
+  //   element: <ProtectedRoute />,
+  //   children: [
+  //     {
+  //       path: "/admin",
+  //       element: <AdminLayout />,
+  //       children: [
+  //         {
+  //           index: true,
+  //           element: <Dashboard />,
+  //         },
+  //         {
+  //           path: "dashboard",
+  //           element: <Dashboard />,
+  //         },
+  //         {
+  //           path: "settings",
+  //           element: <Settings />,
+  //         },
+  //         {
+  //           path: "tables",
+  //           element: <Tables />,
+  //         },
+  //         {
+  //           path: "movies",
+  //           element: <MovieManager />,
+  //         },
+  //         {
+  //           path: "category",
+  //           element: <CategoryManager />,
+  //         },
+  //         {
+  //           path: "users",
+  //           element: <UserManager />,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
 ]);

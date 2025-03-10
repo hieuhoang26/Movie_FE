@@ -2,23 +2,20 @@ import http from "./http";
 
 const URL_UserReview = "user/review";
 
-export const adminUserApi = {
-  //   getReviewByMovieId(id) {
-  //     return http.get(`${URL_UserReview}/${id}`);
-  //   },
-  createReview() {
-    return http.get(`${URL_UserReview}/${}`);
+export const UserReviewApi = {
+  getReviewByMovieId(movie, page, size) {
+    return http.get(
+      `${URL_UserReview}?movie=${movie}&page=${page}&size=${size}`
+    );
   },
-  deleteUser(id) {
-    return http.delete(`${URL_UserReview}/${id}`);
-  },
-  EditAdminUser(id, userName, email, password, profilePicture, role) {
-    return http.put(`${URL_UserReview}/${id}`, {
-      userName: userName,
-      email: email,
-      password: password,
-      profilePicture: profilePicture,
-      role: role,
+  createReview(movieId, rating, comment) {
+    return http.post(`${URL_UserReview}`, {
+      movieId: movieId,
+      rating: rating,
+      comment: comment,
     });
+  },
+  deleteReview(id) {
+    return http.delete(`${URL_UserReview}/${id}`);
   },
 };

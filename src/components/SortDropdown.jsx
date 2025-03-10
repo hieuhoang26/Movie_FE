@@ -1,9 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 
-export default function SortDropdown() {
+export default function SortDropdown({ onSortChange }) {
   const [openSort, setOpenSort] = useState(false);
-  const [sortType, setSortType] = useState("Sort by");
+  const [selectedSort, setSelectedSort] = useState({
+    id: null,
+    label: "Sort by",
+  });
   const dropdownRef = useRef(null);
+
+  const sortOptions = [
+    { id: "newest", label: "Most newest" },
+    { id: "mostPopular", label: "Most popular" },
+    { id: "highestRated", label: "Most rated" },
+  ];
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -18,13 +27,19 @@ export default function SortDropdown() {
     };
   }, []);
 
+  const handleSelect = (option) => {
+    setSelectedSort(option);
+    setOpenSort(false);
+    onSortChange(option.id);
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpenSort(!openSort)}
         className="flex items-center justify-between w-40 py-2 mt-2 text-sm font-semibold text-left bg-gray-800 text-white rounded-lg border border-gray-600 px-4"
       >
-        <span>{sortType}</span>
+        <span>{selectedSort.label}</span>
         <svg
           fill="currentColor"
           viewBox="0 0 20 20"
@@ -43,18 +58,15 @@ export default function SortDropdown() {
         <div className="absolute z-50 w-full mt-2 bg-gray-900 text-white rounded-md shadow-lg border border-gray-700">
           <div className="px-2 pt-2 pb-2">
             <div className="flex flex-col">
-              {["Most discussed", "Most popular", "Most upvoted"].map(
+              {sortOptions.map(
                 (option) =>
-                  option !== sortType && (
+                  option.id !== selectedSort.id && (
                     <button
-                      key={option}
-                      onClick={() => {
-                        setSortType(option);
-                        setOpenSort(false);
-                      }}
+                      key={option.id}
+                      onClick={() => handleSelect(option)}
                       className="flex flex-row items-start rounded-lg p-2 hover:bg-gray-700"
                     >
-                      <p className="font-semibold">{option}</p>
+                      <p className="font-semibold">{option.label}</p>
                     </button>
                   )
               )}

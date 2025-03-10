@@ -7,6 +7,7 @@ import {
   getProfileFromLS,
   setProfileToLS,
 } from "../utils/storage";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -27,7 +28,7 @@ const AuthProvider = ({ children }) => {
 
   const login = (accessToken) => {
     const decoded = jwtDecode(accessToken);
-    console.log("Decoded token inside login:", decoded);
+    // console.log("Decoded token inside login:", decoded);
     const { id, roleName } = decoded;
     setUserId(id);
     setRole(roleName);
@@ -39,6 +40,7 @@ const AuthProvider = ({ children }) => {
     setRole(null);
     setIsAuthenticated(false);
     clearLS();
+    window.location.href = "/login";
   };
 
   return (

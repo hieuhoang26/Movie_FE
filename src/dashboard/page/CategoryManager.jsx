@@ -11,7 +11,7 @@ export default function CategoryManager() {
   const [editingCategory, setEditingCategory] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
 
   useEffect(() => {
     fetchCategory();

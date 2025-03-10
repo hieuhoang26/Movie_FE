@@ -2,7 +2,7 @@ import http from "./http";
 
 const URL_User = "user/user";
 
-export const adminUserApi = {
+export const UserApi = {
   getById(id) {
     return http.get(`${URL_User}/${id}`);
   },
